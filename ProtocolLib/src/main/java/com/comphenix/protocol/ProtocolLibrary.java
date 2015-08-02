@@ -19,6 +19,8 @@ package com.comphenix.protocol;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -88,12 +90,12 @@ public class ProtocolLibrary extends JavaPlugin {
 	/**
 	 * The maximum version ProtocolLib has been tested with,
 	 */
-	public static final String MAXIMUM_MINECRAFT_VERSION = "1.8.7";
+	public static final String MAXIMUM_MINECRAFT_VERSION = "1.8.8";
 
 	/**
-	 * The date (with ISO 8601 or YYYY-MM-DD) when the most recent version was released.
+	 * The date (with ISO 8601 or YYYY-MM-DD) when the most recent version (1.8.8) was released.
 	 */
-	public static final String MINECRAFT_LAST_RELEASE_DATE = "2015-02-20";
+	public static final String MINECRAFT_LAST_RELEASE_DATE = "2015-07-27";
 
 	// Different commands
 	private enum ProtocolCommand {
@@ -168,6 +170,10 @@ public class ProtocolLibrary extends JavaPlugin {
 		// Add global parameters
 		DetailedErrorReporter detailedReporter = new DetailedErrorReporter(this);
 		reporter = getFilteredReporter(detailedReporter);
+
+		// Configuration
+		saveDefaultConfig();
+		reloadConfig();
 
 		try {
 			config = new ProtocolConfig(this);
@@ -248,7 +254,7 @@ public class ProtocolLibrary extends JavaPlugin {
 			try {
 				switch (command) {
 				case PROTOCOL:
-					commandProtocol = new CommandProtocol(reporter, this, config);
+					commandProtocol = new CommandProtocol(reporter, this);
 					break;
 				case FILTER:
 					commandFilter = new CommandFilter(reporter, this, config);
@@ -261,6 +267,8 @@ public class ProtocolLibrary extends JavaPlugin {
 				throw e;
 			} catch (ThreadDeath e) {
 				throw e;
+			} catch (LinkageError e) {
+				logger.warning("Failed to register command " + command.name() + ": " + e);
 			} catch (Throwable e) {
 				reporter.reportWarning(this, Report.newBuilder(REPORT_CANNOT_REGISTER_COMMAND)
 						.messageParam(command.name(), e.getMessage()).error(e));
@@ -422,22 +430,21 @@ public class ProtocolLibrary extends JavaPlugin {
 		}
 	}
 
+	// Plugin authors: Notify me to remove these
+	public static List<String> INCOMPATIBLE = Arrays.asList("TagAPI");
+
 	private void checkForIncompatibility(PluginManager manager) {
-		// Plugin authors: Notify me to remove these
-		String[] incompatible = { };
-
-		for (String plugin : incompatible) {
+		for (String plugin : INCOMPATIBLE) {
 			if (manager.getPlugin(plugin) != null) {
-				// Check for versions, etc.
-				logger.severe("Detected incompatible plugin: " + plugin);
-			}
-		}
-
-		// Special case for TagAPI and iTag
-		if (manager.getPlugin("TagAPI") != null) {
-			Plugin iTag = manager.getPlugin("iTag");
-			if (iTag == null || iTag.getDescription().getVersion().startsWith("1.0")) {
-				logger.severe("Detected incompatible plugin: TagAPI");
+				// Special case for TagAPI and iTag
+				if (plugin.equals("TagAPI")) {
+					Plugin iTag = manager.getPlugin("iTag");
+					if (iTag == null || iTag.getDescription().getVersion().startsWith("1.0")) {
+						logger.severe("Detected incompatible plugin: TagAPI");
+					}
+				} else {
+					logger.severe("Detected incompatible plugin: " + plugin);
+				}
 			}
 		}
 	}

@@ -18,31 +18,34 @@ package com.comphenix.protocol.wrappers;
 
 import static org.junit.Assert.assertEquals;
 
-import org.bukkit.Material;
+import java.util.UUID;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.comphenix.protocol.BukkitInitialization;
 import com.comphenix.protocol.utility.MinecraftReflection;
+import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
 
 /**
  * @author dmulloy2
  */
-
-public class WrappedBlockDataTest {
+public class PlayerInfoDataTest {
 
 	@BeforeClass
-	public static void initializeBukkit() {
+	public static void initializeBukkit() throws IllegalAccessException {
 		BukkitInitialization.initializePackage();
 	}
 
 	@Test
 	public void test() {
-		Material type = Material.STONE;
-		WrappedBlockData data = WrappedBlockData.createData(type);
-		Object generic = BukkitConverters.getWrappedBlockDataConverter().getGeneric(MinecraftReflection.getIBlockDataClass(), data);
-		WrappedBlockData back = BukkitConverters.getWrappedBlockDataConverter().getSpecific(generic);
+		WrappedGameProfile profile = new WrappedGameProfile(UUID.randomUUID(), "Name");
+		WrappedChatComponent displayName = WrappedChatComponent.fromText("Name's Name");
 
-		assertEquals(data.getType(), back.getType());
+		PlayerInfoData data = new PlayerInfoData(profile, 42, NativeGameMode.CREATIVE, displayName);
+		Object generic = PlayerInfoData.getConverter().getGeneric(MinecraftReflection.getPlayerInfoDataClass(), data);
+		PlayerInfoData back = PlayerInfoData.getConverter().getSpecific(generic);
+
+		assertEquals(data, back);
 	}
 }

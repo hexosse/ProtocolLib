@@ -3,17 +3,18 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.comphenix.protocol</groupId>
   <artifactId>ProtocolLib-Parent</artifactId>
-  <version>dev-SNAPSHOT</version>
+  <version>v3-SNAPSHOT</version>
   <name>ProtocolLib-Parent</name>
 
   <modules>
     <module>ProtocolLib</module>
-    <module>Modules/ProtocolLib-ShadedNetty</module>
+    <module>modules/v1_7_R4</module>
   </modules>
 
   <description>Provides read/write access to the Minecraft protocol.</description>
   <url>http://www.spigotmc.org/resources/protocollib.1997/</url>
   <packaging>pom</packaging>
+  <inceptionYear>2012</inceptionYear>
 
   <distributionManagement>
     <repository>
@@ -57,6 +58,10 @@
         <version>2.7</version>
         <configuration>
           <failOnError>false</failOnError>
+          <encoding>ISO-8859-1</encoding>
+          <doctitle>ProtocolLib JavaDocs</doctitle>
+          <windowtitle>ProtocolLib JavaDocs</windowtitle>
+          <bottom>Copyright &#169; {inceptionYear}&#x2013;{currentYear} Comphenix and dmulloy2. Licensed under the GNU GPL v2.</bottom>
         </configuration>
         <executions>
           <execution>
@@ -70,14 +75,13 @@
     </plugins>
   </build>
 
-  <reporting>
+  <!--<reporting>
     <plugins>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.7</version>
         <configuration>
           <aggregate>true</aggregate>
-          <failOnError>false</failOnError>
         </configuration>
       </plugin>
       <plugin>
@@ -85,5 +89,5 @@
         <version>2.4</version>
       </plugin>
     </plugins>
-  </reporting>
+  </reporting>-->
 </project>

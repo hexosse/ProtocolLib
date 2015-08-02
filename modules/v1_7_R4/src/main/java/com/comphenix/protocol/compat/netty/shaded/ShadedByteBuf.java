@@ -13,11 +13,13 @@
  *  You should have received a copy of the GNU General Public License along with this program;
  *  if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
  *  02111-1307 USA
- */package com.comphenix.protocol.compat.netty.shaded;
+ */
+package com.comphenix.protocol.compat.netty.shaded;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.ref.WeakReference;
 
 import net.minecraft.util.io.netty.buffer.ByteBuf;
 
@@ -28,49 +30,49 @@ import com.comphenix.protocol.compat.netty.WrappedByteBuf;
  */
 
 public class ShadedByteBuf implements WrappedByteBuf {
-	private final ByteBuf handle;
+	private WeakReference<ByteBuf> handle;
 
 	public ShadedByteBuf(ByteBuf handle) {
-		this.handle = handle;
+		this.handle = new WeakReference<ByteBuf>(handle);
 	}
 
 	@Override
 	public Object getHandle() {
-		return handle;
+		return handle.get();
 	}
 
 	@Override
 	public void writeBytes(ObjectInputStream input, int id) throws IOException {
-		handle.writeBytes(input, id);
+		handle.get().writeBytes(input, id);
 	}
 
 	@Override
 	public int readableBytes() {
-		return handle.readableBytes();
+		return handle.get().readableBytes();
 	}
 
 	@Override
 	public void readBytes(ObjectOutputStream output, int readableBytes) throws IOException {
-		handle.readBytes(output, readableBytes);
+		handle.get().readBytes(output, readableBytes);
 	}
 
 	@Override
 	public void readBytes(byte[] data) {
-		handle.readBytes(data);
+		handle.get().readBytes(data);
 	}
 
 	@Override
 	public void writeByte(byte b) {
-		handle.writeByte(b);
+		handle.get().writeByte(b);
 	}
 
 	@Override
 	public void writeByte(int i) {
-		handle.writeByte(i);
+		handle.get().writeByte(i);
 	}
 
 	@Override
 	public void writeBytes(byte[] bytes) {
-		handle.writeBytes(bytes);
+		handle.get().writeBytes(bytes);
 	}
 }

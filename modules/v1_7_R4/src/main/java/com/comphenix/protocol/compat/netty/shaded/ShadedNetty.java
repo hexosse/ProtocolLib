@@ -13,7 +13,8 @@
  *  You should have received a copy of the GNU General Public License along with this program;
  *  if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
  *  02111-1307 USA
- */package com.comphenix.protocol.compat.netty.shaded;
+ */
+package com.comphenix.protocol.compat.netty.shaded;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -44,15 +45,11 @@ public class ShadedNetty implements NettyCompat {
 
 	@Override
 	public WrappedByteBuf createPacketBuffer() {
-		return getPacketDataSerializer(allocateUnpooled());
-	}
-
-	private WrappedByteBuf getPacketDataSerializer(WrappedByteBuf buffer) {
+		ByteBuf buffer = UnpooledByteBufAllocator.DEFAULT.buffer();
 		Class<?> packetSerializer = MinecraftReflection.getPacketDataSerializerClass();
 
 		try {
-			return new ShadedByteBuf((ByteBuf) packetSerializer.getConstructor(MinecraftReflection.getByteBufClass())
-					.newInstance(buffer.getHandle()));
+			return new ShadedByteBuf((ByteBuf) packetSerializer.getConstructor(ByteBuf.class).newInstance(buffer));
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot construct packet serializer.", e);
 		}

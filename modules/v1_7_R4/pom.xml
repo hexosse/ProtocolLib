@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>ShadedNetty</artifactId>
-  <version>3.6.4-SNAPSHOT</version>
-  <name>ShadedNetty</name>
+  <artifactId>ProtocolLib-v1_7_R4</artifactId>
+  <name>ProtocolLib-v1_7_R4</name>
+  <version>3.6.5-SNAPSHOT</version>
 
   <description>Provides read/write access to the Minecraft protocol.</description>
   <url>http://www.spigotmc.org/resources/protocollib.1997/</url>
@@ -12,7 +12,7 @@
   <parent>
     <groupId>com.comphenix.protocol</groupId>
     <artifactId>ProtocolLib-Parent</artifactId>
-    <version>dev-SNAPSHOT</version>
+    <version>v3-SNAPSHOT</version>
     <relativePath>../../</relativePath>
   </parent>
 
@@ -87,6 +87,21 @@
             <addMavenDescriptor>false</addMavenDescriptor>
           </archive>
           <finalName>ProtocolLib</finalName>
+          <outputDirectory>../../target/</outputDirectory>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.7</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <id>attach-javadocs</id>
+          </execution>
+        </executions>
+        <configuration>
+          <skip>true</skip>
         </configuration>
       </plugin>
 
@@ -196,7 +211,7 @@
     <developer>
       <id>dmulloy2</id>
       <name>Dan Mulloy</name>
-      <url>http://shadowvolt.com/</url>
+      <url>http://dmulloy2.net/</url>
       <roles>
         <role>developer</role>
         <role>maintainer</role>
@@ -216,24 +231,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.comphenix.protocol</groupId>
-      <artifactId>ProtocolLib</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>cglib</groupId>
-      <artifactId>cglib-nodep</artifactId>
-      <version>2.2.2</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.comphenix.executors</groupId>
-      <artifactId>BukkitExecutors</artifactId>
-      <version>1.1-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
       <version>1.7.10-R0.1-SNAPSHOT</version>
@@ -246,28 +243,21 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.10</version>
-      <scope>test</scope>
+      <groupId>com.comphenix.protocol</groupId>
+      <artifactId>ProtocolLib</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.8.4</version>
-      <scope>test</scope>
+      <groupId>cglib</groupId>
+      <artifactId>cglib-nodep</artifactId>
+      <version>2.2.2</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-junit4</artifactId>
-      <version>1.5</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito</artifactId>
-      <version>1.5</version>
-      <scope>test</scope>
+      <groupId>com.comphenix.executors</groupId>
+      <artifactId>BukkitExecutors</artifactId>
+      <version>1.1-SNAPSHOT</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 </project>
