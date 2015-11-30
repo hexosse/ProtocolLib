@@ -19,7 +19,6 @@ package com.comphenix.protocol.compat.netty.independent;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
@@ -33,7 +32,6 @@ import io.netty.util.internal.TypeParameterMatcher;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.nio.channels.ClosedChannelException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -282,22 +280,10 @@ public class NettyChannelInjector extends ByteToMessageDecoder implements Channe
 				}
 			};
 
-			ChannelHandlerAdapter exceptionHandler = new ChannelHandlerAdapter() {
-				@Override
-				public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-					if (cause instanceof ClosedChannelException) {
-						// Ignore
-					} else {
-						super.exceptionCaught(ctx, cause);
-					}
-				}
-			};
-
 			// Insert our handlers - note that we effectively replace the vanilla encoder/decoder
 			originalChannel.pipeline().addBefore("decoder", "protocol_lib_decoder", this);
 			originalChannel.pipeline().addBefore("protocol_lib_decoder", "protocol_lib_finish", finishHandler);
 			originalChannel.pipeline().addAfter("encoder", "protocol_lib_encoder", protocolEncoder);
-			originalChannel.pipeline().addLast("protocol_lib_exception_handler", exceptionHandler);
 
 			// Intercept all write methods
 			channelField.setValue(new NettyChannelProxy(originalChannel, MinecraftReflection.getPacketClass()) {
@@ -402,7 +388,7 @@ public class NettyChannelInjector extends ByteToMessageDecoder implements Channe
 	 * @return TRUE if it is, FALSE if not or unknown.
 	 */
 	private boolean guessCompression(ChannelHandler handler) {
-		String className = handler != null ? handler.getClass().getCanonicalName() : null;
+		String className = handler != null ? handler.getClass().getCanonicalName() : "";
 		return className.contains("Compressor") || className.contains("Decompressor");
 	}
 
@@ -824,7 +810,7 @@ public class NettyChannelInjector extends ByteToMessageDecoder implements Channe
 					@Override
 					public void run() {
 						String[] handlers = new String[] {
-								"protocol_lib_decoder", "protocol_lib_finish", "protocol_lib_encoder", "protocol_lib_exception_handler"
+								"protocol_lib_decoder", "protocol_lib_finish", "protocol_lib_encoder"
 						};
 
 						for (String handler : handlers) {

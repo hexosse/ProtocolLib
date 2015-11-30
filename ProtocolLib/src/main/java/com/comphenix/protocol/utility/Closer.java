@@ -14,33 +14,42 @@
  *  if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
  *  02111-1307 USA
  */
-package com.comphenix.protocol.compat.netty;
+package com.comphenix.protocol.utility;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author dmulloy2
  */
 
-public interface WrappedByteBuf {
+public class Closer implements AutoCloseable {
+	private final List<AutoCloseable> list;
 
-	void writeBytes(ObjectInputStream input, int id) throws IOException;
+	private Closer() {
+		this.list = new ArrayList<AutoCloseable>();
+	}
 
-	Object getHandle();
+	public static Closer create() {
+		return new Closer();
+	}
 
-	int readableBytes();
+	public <C extends AutoCloseable> C register(C close) {
+		list.add(close);
+		return close;
+	}
 
-	void readBytes(ObjectOutputStream output, int readableBytes) throws IOException;
+	@Override
+	public void close() {
+		for (AutoCloseable close : list) {
+			closeQuietly(close);
+		}
+	}
 
-	void readBytes(byte[] data);
+	public static void closeQuietly(AutoCloseable close) {
+		try {
+			close.close();
+		} catch (Throwable ex) { }
+	}
 
-	void writeByte(byte b);
-
-	void writeByte(int i);
-
-	void writeBytes(byte[] bytes);
-
-	byte[] array();
 }

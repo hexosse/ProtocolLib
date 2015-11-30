@@ -19,7 +19,6 @@ package com.comphenix.protocol.compat.netty.shaded;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.nio.channels.ClosedChannelException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -32,7 +31,6 @@ import java.util.concurrent.ConcurrentMap;
 import net.minecraft.util.io.netty.buffer.ByteBuf;
 import net.minecraft.util.io.netty.channel.Channel;
 import net.minecraft.util.io.netty.channel.ChannelHandler;
-import net.minecraft.util.io.netty.channel.ChannelHandlerAdapter;
 import net.minecraft.util.io.netty.channel.ChannelHandlerContext;
 import net.minecraft.util.io.netty.channel.ChannelInboundHandlerAdapter;
 import net.minecraft.util.io.netty.channel.ChannelPipeline;
@@ -281,24 +279,10 @@ public class ShadedChannelInjector extends ByteToMessageDecoder implements Chann
 				}
 			};
 
-			ChannelHandlerAdapter exceptionHandler = new ChannelHandlerAdapter() {
-				@Override
-				public void exceptionCaught(ChannelHandlerContext context, Throwable ex) throws Exception {
-					if (ex instanceof ClosedChannelException) {
-						// Ignore
-					} else {
-						// TODO Actually handle exceptions?
-						System.err.println("[ProtocolLib] Encountered an uncaught exception in the channel pipeline:");
-						ex.printStackTrace();
-					}
-				}
-			};
-
 			// Insert our handlers - note that we effectively replace the vanilla encoder/decoder
 			originalChannel.pipeline().addBefore("decoder", "protocol_lib_decoder", this);
 			originalChannel.pipeline().addBefore("protocol_lib_decoder", "protocol_lib_finish", finishHandler);
 			originalChannel.pipeline().addAfter("encoder", "protocol_lib_encoder", protocolEncoder);
-			originalChannel.pipeline().addLast("protocol_lib_exception_handler", exceptionHandler);
 
 			// Intercept all write methods
 			channelField.setValue(new ShadedChannelProxy(originalChannel, MinecraftReflection.getPacketClass()) {
@@ -825,7 +809,7 @@ public class ShadedChannelInjector extends ByteToMessageDecoder implements Chann
 					@Override
 					public void run() {
 						String[] handlers = new String[] {
-								"protocol_lib_decoder", "protocol_lib_finish", "protocol_lib_encoder", "protocol_lib_exception_handler"
+								"protocol_lib_decoder", "protocol_lib_finish", "protocol_lib_encoder"
 						};
 
 						for (String handler : handlers) {

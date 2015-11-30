@@ -53,12 +53,12 @@ public class Netty {
 		return compat;
 	}
 
-	public static WrappedByteBuf createPacketBuffer() {
-		return getCompat().createPacketBuffer();
+	public static boolean isIndependent() {
+		return compat instanceof IndependentNetty;
 	}
 
-	public static WrappedByteBuf allocateUnpooled() {
-		return getCompat().allocateUnpooled();
+	public static WrappedByteBuf createPacketBuffer() {
+		return getCompat().createPacketBuffer();
 	}
 
 	public static Class<?> getGenericFutureListenerArray() {
@@ -87,5 +87,13 @@ public class Netty {
 
 	public static WrappedByteBuf packetWriter(DataOutputStream output) {
 		return getCompat().packetWriter(output);
+	}
+
+	public static WrappedByteBuf copiedBuffer(byte[] array) {
+		return getCompat().copiedBuffer(array);
+	}
+
+	public static WrappedByteBuf buffer() {
+		return getCompat().buffer();
 	}
 }

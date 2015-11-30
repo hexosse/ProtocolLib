@@ -21,6 +21,13 @@
     <project.build.number></project.build.number>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>md_5-repo</id>
+      <url>http://repo.md-5.net/content/groups/public/</url>
+    </repository>
+  </repositories>
+
   <build>
     <defaultGoal>clean install</defaultGoal>
     <sourceDirectory>src/main/java</sourceDirectory>
@@ -84,7 +91,12 @@
         <version>2.5</version>
         <configuration>
           <archive>
-            <addMavenDescriptor>false</addMavenDescriptor>
+            <manifestEntries>
+              <Main-Class>com.comphenix.protocol.Application</Main-Class>
+              <Implementation-Title>ProtocolLib</Implementation-Title>
+              <Implementation-Version>${project.version}${project.build.number}</Implementation-Version>
+              <Implementation-Vendor>dmulloy2</Implementation-Vendor>
+            </manifestEntries>
           </archive>
           <finalName>ProtocolLib</finalName>
           <outputDirectory>../../target/</outputDirectory>
